@@ -1,10 +1,17 @@
-print("Enter username: ")
+
+
+println("Welcome to julia-chat")
+println("===")
+print("Please enter username: ")
 name = readline()
 
+println("Booting, please wait...")
+using Dates
 try
   using Firebase
 catch
   import Pkg
+  print("Need to install dependencies, this might takes some minutes")
   Pkg.add("Firebase")
 
   using Firebase
@@ -36,6 +43,10 @@ function showMessages()
     if(!haskey(message, "index"))
       message["index"] = 0
     end
+
+    if(!haskey(message, "date"))
+      message["date"] = ""
+    end
     
     push!(messages, message)
   end
@@ -44,7 +55,19 @@ function showMessages()
   
   for message in messages
     printstyled(message["name"]*"> ", color=:green)
-    println(message["msg"])
+    text = message["msg"]
+    if(text[1]=='!')
+      newtext = text[2:length(text)]
+      printstyled(newtext, color=:red, bold=true)
+    elseif(text[1]=='?')
+      newtext = text[2:length(text)]
+      printstyled(newtext, color=:blue)
+    else
+      print(text)
+    end
+
+    printstyled("\t\t\t\t\t"*message["date"]*"\n", color=:light_black)
+    
   end
   println("======")
   print("Enter message:  ")
@@ -61,6 +84,6 @@ while(true)
   elseif(msg == "exit" || msg == "close")
       break
   else
-    Firebase.realdb_post(PATH,Dict("msg"=>msg,"index"=>length(data),"name"=>name))
+    Firebase.realdb_post(PATH,Dict("msg"=>msg,"index"=>length(data),"name"=>name, "date"=>Dates.format(now(), "dd-mm @ HH:MM:SS")))
   end
 end
