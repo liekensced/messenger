@@ -83,6 +83,11 @@ while(true)
     println("Fetching updates...")
   elseif(msg == "exit" || msg == "close")
       break
+  elseif(msg == "CLEAR")
+    printstyled("Sure you want to clear "*PATH*" completely (y/n)? ", color=:red)
+    if(readline()=="y")
+      realdb_delete(PATH)
+    end
   else
     Firebase.realdb_post(PATH,Dict("msg"=>msg,"index"=>length(data),"name"=>name, "date"=>Dates.format(now(), "dd-mm @ HH:MM:SS")))
   end
