@@ -11,7 +11,7 @@ try
   using Firebase
 catch
   import Pkg
-  print("Need to install dependencies, this might takes some minutes")
+  println("Need to install dependencies, this might takes some minutes")
   Pkg.add("Firebase")
 
   using Firebase
@@ -20,6 +20,7 @@ end
 const PATH = "/messenger/pol176/"
 
 Firebase.realdb_init("https://julia-firebase-default-rtdb.europe-west1.firebasedatabase.app/")
+
 
 function showMessages()
   db = Firebase.realdb_get(PATH)
@@ -56,6 +57,9 @@ function showMessages()
   for message in messages
     printstyled(message["name"]*"> ", color=:green)
     text = message["msg"]
+    if (isempty(text))
+      continue
+    end
     if(text[1]=='!')
       newtext = text[2:length(text)]
       printstyled(newtext, color=:red, bold=true)
